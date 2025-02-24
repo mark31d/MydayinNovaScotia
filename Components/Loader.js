@@ -3,25 +3,22 @@ import {
   View,
   Animated,
   StyleSheet,
-  ImageBackground,
   Image,
   Easing,
 } from 'react-native';
 
 const Loader = ({ onEnd }) => {
-  const appearingAnim = useRef(new Animated.Value(0)).current;    // Для появления
-  const disappearingAnim = useRef(new Animated.Value(1)).current; // Для исчезновения
-  const rotateAnim = useRef(new Animated.Value(0)).current;       // Для вращения спиннера
+  const appearingAnim = useRef(new Animated.Value(0)).current;    
+  const disappearingAnim = useRef(new Animated.Value(1)).current; 
+  const rotateAnim = useRef(new Animated.Value(0)).current;       
 
   useEffect(() => {
-    // 1. Анимация появления логотипа
     Animated.timing(appearingAnim, {
       toValue: 1,
       duration: 1500,
       useNativeDriver: true,
     }).start();
 
-    // 2. Запускаем анимацию вращения
     Animated.loop(
       Animated.timing(rotateAnim, {
         toValue: 1,
@@ -31,7 +28,6 @@ const Loader = ({ onEnd }) => {
       })
     ).start();
 
-    // 3. Через 6 секунд запускаем исчезновение
     setTimeout(() => {
       Animated.timing(disappearingAnim, {
         toValue: 0,
@@ -41,22 +37,18 @@ const Loader = ({ onEnd }) => {
     }, 6000);
   }, []);
 
-  // Преобразование rotateAnim -> угол вращения
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
 
+  // Количество линий (лучей)
+  const linesCount = 12;
+  const linesArray = [...Array(linesCount).keys()];
+
   return (
     <View style={styles.container}>
-     
-      <Animated.View
-        style={[
-          styles.overlay,
-          { opacity: disappearingAnim },
-        ]}
-      >
-        
+      <Animated.View style={[styles.overlay, { opacity: disappearingAnim }]}>
         <Animated.Image
           source={require('../assets/Logo.png')}
           style={[
@@ -68,14 +60,26 @@ const Loader = ({ onEnd }) => {
           ]}
           resizeMode="contain"
         />
-       
         <Animated.View
           style={[
             styles.spinnerContainer,
             { transform: [{ rotate: spin }] },
           ]}
         >
-          <View style={styles.spinnerDot} />
+          {linesArray.map((_, i) => (
+            <View
+              key={i}
+              style={[
+                styles.spinnerLine,
+                {
+                  transform: [
+                    { translateX: -1 }, // чтобы линия была по центру
+                    { rotate: `${(360 / linesCount) * i}deg` },
+                  ],
+                },
+              ]}
+            />
+          ))}
         </Animated.View>
       </Animated.View>
     </View>
@@ -87,7 +91,7 @@ export default Loader;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#143468', // Цвет фона
+    backgroundColor: '#143468',
   },
   overlay: {
     flex: 1,
@@ -97,7 +101,7 @@ const styles = StyleSheet.create({
   logo: {
     width: '70%',
     maxWidth: 300,
-    aspectRatio: 1.5, // можно подогнать под ваши пропорции
+    aspectRatio: 1.5,
     marginBottom: 60,
   },
   spinnerContainer: {
@@ -107,10 +111,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  spinnerDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+  spinnerLine: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
     backgroundColor: '#FFFFFF',
+    left: '50%',     // центрируем по горизонтали
+    top: 0,          // линия будет выходить "из центра" вверх
   },
 });
