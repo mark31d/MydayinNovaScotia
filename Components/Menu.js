@@ -12,6 +12,7 @@ import {
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import PLACES_WITH_COORDS from './PlaceWithCoords';
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const MAIN_BG = '#143468';
@@ -30,10 +31,6 @@ const INITIAL_REGION = {
   latitudeDelta: 0.5,
   longitudeDelta: 0.5,
 };
-
-
-
-
 
 export default function Menu() {
   const navigation = useNavigation();
@@ -81,35 +78,30 @@ export default function Menu() {
   };
 
   const toggleFavorite = (id) => {
-    setPlaces((prev) => {
-      return prev.map((p) =>
+    setPlaces((prev) =>
+      prev.map((p) =>
         p.id === id ? { ...p, favorite: !p.favorite } : p
-      );
-    });
+      )
+    );
   };
 
-  
   const goToFavorites = () => {
     navigation.navigate('FavoritesScreen', { places });
-  };
-
-  return (
+  };  return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Best places</Text>
           <View style={styles.headerIcons}>
-          <TouchableOpacity 
-  style={styles.iconButton} 
-  onPress={() => navigation.navigate('MiniGame')}
->
-  <Image
-    source={require('../assets/console.png')}
-    style={styles.iconImage}
-/>
-</TouchableOpacity>
-
-            
+            <TouchableOpacity 
+              style={styles.iconButton} 
+              onPress={() => navigation.navigate('MiniGame')}
+            >
+              <Image
+                source={require('../assets/console.png')}
+                style={styles.iconImage}
+              />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={goToFavorites}>
               <Image
                 source={require('../assets/heart.png')}
@@ -117,7 +109,8 @@ export default function Menu() {
               />
             </TouchableOpacity>
           </View>
-        </View>        <View style={styles.mapContainer}>
+        </View>
+        <View style={styles.mapContainer}>
           <MapView ref={mapRef} style={styles.map} initialRegion={INITIAL_REGION}>
             {displayedPlaces.map((pl, i) => (
               <Marker
@@ -128,7 +121,6 @@ export default function Menu() {
               />
             ))}
           </MapView>
-
           <TouchableOpacity style={styles.leftArrow} onPress={goLeft}>
             <Text style={styles.arrowText}>←</Text>
           </TouchableOpacity>
@@ -136,7 +128,6 @@ export default function Menu() {
             <Text style={styles.arrowText}>→</Text>
           </TouchableOpacity>
         </View>
-
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -158,54 +149,51 @@ export default function Menu() {
             </TouchableOpacity>
           ))}
         </ScrollView>
-
         <View style={styles.placeContainer}>
           {displayedPlaces.map((placeItem) => (
-           <TouchableOpacity
-           key={placeItem.id}
-           style={styles.placeCard}
-           onPress={() =>
-             navigation.navigate('PlaceDetails', {
-               place: placeItem,
-               onToggleFavorite: (id, newFavorite) => {
-                 // Обновляем состояние для синхронизации списка
-                 setPlaces((prev) =>
-                   prev.map((p) => (p.id === id ? { ...p, favorite: newFavorite } : p))
-                 );
-               },
-             })
-           }
-         >
-           <Image source={placeItem.image} style={styles.placeImage} />
-           <Text style={styles.placeName}>{placeItem.name}</Text>
-           <TouchableOpacity
-             style={[
-               styles.heartButton,
-               placeItem.favorite && { backgroundColor: '#FFD700' },
-             ]}
-             onPress={() => {
-               // Если нужно переключить "сердечко" прямо в списке, можно вызвать аналогичную логику
-               setPlaces((prev) =>
-                 prev.map((p) =>
-                   p.id === placeItem.id ? { ...p, favorite: !p.favorite } : p
-                 )
-               );
-             }}
-           >
-             <Image
-               source={require('../assets/heart.png')}
-               style={[
-                 styles.heartIcon,
-                 placeItem.favorite && { tintColor: '#333' },
-               ]}
-             />
-           </TouchableOpacity>
-         </TouchableOpacity>
+            <TouchableOpacity
+              key={placeItem.id}
+              style={styles.placeCard}
+              onPress={() =>
+                navigation.navigate('PlaceDetails', {
+                  place: placeItem,
+                  onToggleFavorite: (id, newFavorite) => {
+                    setPlaces((prev) =>
+                      prev.map((p) =>
+                        p.id === id ? { ...p, favorite: newFavorite } : p
+                      )
+                    );
+                  },
+                })
+              }
+            >
+              <Image source={placeItem.image} style={styles.placeImage} />
+              <Text style={styles.placeName}>{placeItem.name}</Text>
+              <TouchableOpacity
+                style={[
+                  styles.heartButton,
+                  placeItem.favorite && { backgroundColor: '#FFD700' },
+                ]}
+                onPress={() => {
+                  setPlaces((prev) =>
+                    prev.map((p) =>
+                      p.id === placeItem.id ? { ...p, favorite: !p.favorite } : p
+                    )
+                  );
+                }}
+              >
+                <Image
+                  source={require('../assets/heart.png')}
+                  style={[
+                    styles.heartIcon,
+                    placeItem.favorite && { tintColor: '#333' },
+                  ]}
+                />
+              </TouchableOpacity>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
-
-      
     </SafeAreaView>
   );
 }const styles = StyleSheet.create({
@@ -255,7 +243,7 @@ export default function Menu() {
   map: {
     flex: 1,
     borderRadius: 25,
-    padding:10,
+    padding: 10,
   },
   leftArrow: {
     position: 'absolute',
@@ -381,4 +369,3 @@ export default function Menu() {
     tintColor: '#1F51A4',
   },
 });
-
