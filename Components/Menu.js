@@ -82,21 +82,9 @@ export default function Menu() {
 
   const toggleFavorite = (id) => {
     setPlaces((prev) => {
-      const updated = [...prev];
-      const idx = updated.findIndex((p) => p.id === id);
-      if (idx === -1) return prev;
-
-      updated[idx].favorite = !updated[idx].favorite;
-     
-      if (updated[idx].favorite) {
-        const [favPlace] = updated.splice(idx, 1);
-        updated.unshift(favPlace);
-      } else {
-       
-        const [unfavPlace] = updated.splice(idx, 1);
-        updated.push(unfavPlace);
-      }
-      return updated;
+      return prev.map((p) =>
+        p.id === id ? { ...p, favorite: !p.favorite } : p
+      );
     });
   };
 
@@ -173,32 +161,46 @@ export default function Menu() {
 
         <View style={styles.placeContainer}>
           {displayedPlaces.map((placeItem) => (
-            <TouchableOpacity
-              key={placeItem.id}
-              style={styles.placeCard}
-              onPress={() =>
-                navigation.navigate('PlaceDetails', { place: placeItem })
-              }
-            >
-              <Image source={placeItem.image} style={styles.placeImage} />
-              <Text style={styles.placeName}>{placeItem.name}</Text>
-
-              <TouchableOpacity
-                style={[
-                  styles.heartButton,
-                  placeItem.favorite && { backgroundColor: '#FFD700' },
-                ]}
-                onPress={() => toggleFavorite(placeItem.id)}
-              >
-                <Image
-                  source={require('../assets/heart.png')}
-                  style={[
-                    styles.heartIcon,
-                    placeItem.favorite && { tintColor: '#333' },
-                  ]}
-                />
-              </TouchableOpacity>
-            </TouchableOpacity>
+           <TouchableOpacity
+           key={placeItem.id}
+           style={styles.placeCard}
+           onPress={() =>
+             navigation.navigate('PlaceDetails', {
+               place: placeItem,
+               onToggleFavorite: (id, newFavorite) => {
+                 // Обновляем состояние для синхронизации списка
+                 setPlaces((prev) =>
+                   prev.map((p) => (p.id === id ? { ...p, favorite: newFavorite } : p))
+                 );
+               },
+             })
+           }
+         >
+           <Image source={placeItem.image} style={styles.placeImage} />
+           <Text style={styles.placeName}>{placeItem.name}</Text>
+           <TouchableOpacity
+             style={[
+               styles.heartButton,
+               placeItem.favorite && { backgroundColor: '#FFD700' },
+             ]}
+             onPress={() => {
+               // Если нужно переключить "сердечко" прямо в списке, можно вызвать аналогичную логику
+               setPlaces((prev) =>
+                 prev.map((p) =>
+                   p.id === placeItem.id ? { ...p, favorite: !p.favorite } : p
+                 )
+               );
+             }}
+           >
+             <Image
+               source={require('../assets/heart.png')}
+               style={[
+                 styles.heartIcon,
+                 placeItem.favorite && { tintColor: '#333' },
+               ]}
+             />
+           </TouchableOpacity>
+         </TouchableOpacity>
           ))}
         </View>
       </ScrollView>

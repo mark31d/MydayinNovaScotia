@@ -10,23 +10,21 @@ import {
   Image,
   Alert,
   ScrollView,
+  Modal,
 } from 'react-native';
-import { useAudio } from './AudioContext';    // Контекст для музыки
-import { useVibration } from './VibrationContext'; // Контекст для вибрации
+import { useAudio } from './AudioContext';   
+import { useVibration } from './VibrationContext'; 
 
 const { width, height } = Dimensions.get('window');
-
-// Функция сброса счётчиков (пример)
-const resetScoreboard = () => {
-  Alert.alert('Scores Reset', 'All scores have been reset!');
-};
 
 const Settings = ({ navigation }) => {
   const { isMusicPlaying, setIsMusicPlaying, volume, setVolume } = useAudio();
   const { vibrationOn, setVibrationOn } = useVibration();
   const [localVolume, setLocalVolume] = useState(volume);
 
-  // Увеличение/уменьшение громкости
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+
   const handleVolumeChange = (change) => {
     const newVolume = Math.max(0, Math.min(1, localVolume + change));
     setLocalVolume(newVolume);
@@ -37,31 +35,32 @@ const Settings = ({ navigation }) => {
     setVolume(localVolume);
   }, [localVolume, setVolume]);
 
+  const submitRating = () => {
+    setRatingModalVisible(false);
+    Alert.alert('Thank you!', 'Thank you for your feedback!');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Общий фон - тёмно-синий, как на скриншоте */}
       <View style={styles.container}>
-
-        {/* Прокрутка на случай маленьких экранов */}
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          
-          {/* Заголовок "Settings" */}
           <Text style={styles.title}>Settings</Text>
-
-          {/* Крупная иконка вверху (шестерёнка/самолёт) */}
           <Image
-            source={require('../assets/settingslog.png')} // Замените путь на вашу иконку
+            source={require('../assets/settingslog.png')}
             style={styles.icon}
           />
 
-          {/* Кнопка "Rate us!" - белая прямоугольная область */}
-          <TouchableOpacity style={styles.rateButton} onPress={() => Alert.alert('Rate Us', 'Thank you for rating!')}>
+          <TouchableOpacity
+            style={styles.rateButton}
+            onPress={() => {
+              setRating(0);
+              setRatingModalVisible(true);
+            }}
+          >
             <Text style={styles.rateButtonText}>Rate us!</Text>
           </TouchableOpacity>
 
-          {/* Блок с переключателями и громкостью */}
           <View style={styles.settingsBlock}>
-            {/* Включение/выключение музыки */}
             <View style={styles.settingItem}>
               <Text style={styles.settingItemText}>Turn Music On/Off</Text>
               <Switch
@@ -72,22 +71,28 @@ const Settings = ({ navigation }) => {
               />
             </View>
 
-            {/* Громкость музыки (с кнопками +/-) */}
+           
             <View style={styles.settingItem}>
               <Text style={styles.settingItemText}>
                 Music Volume: {Math.round(localVolume * 100)}%
               </Text>
               <View style={styles.volumeControls}>
-                <TouchableOpacity onPress={() => handleVolumeChange(-0.1)} style={styles.volumeButton}>
+                <TouchableOpacity
+                  onPress={() => handleVolumeChange(-0.1)}
+                  style={styles.volumeButton}
+                >
                   <Text style={styles.volumeButtonText}>-</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleVolumeChange(0.1)} style={styles.volumeButton}>
+                <TouchableOpacity
+                  onPress={() => handleVolumeChange(0.1)}
+                  style={styles.volumeButton}
+                >
                   <Text style={styles.volumeButtonText}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            {/* Включение/выключение вибрации */}
+           
             <View style={styles.settingItem}>
               <Text style={styles.settingItemText}>Enable Vibration</Text>
               <Switch
@@ -98,54 +103,91 @@ const Settings = ({ navigation }) => {
               />
             </View>
           </View>
-
-          {/* Дополнительные пункты (как в примере на скриншоте) */}
           <TouchableOpacity
             style={styles.listButton}
-            onPress={() => Alert.alert('Developer Website', 'Open Developer Website')}
+            onPress={() =>
+              Alert.alert(
+                'Developer Website',
+                'This feature will be available in future versions.'
+              )
+            }
           >
             <Text style={styles.listButtonText}>Developer Website</Text>
-          </TouchableOpacity><TouchableOpacity
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.listButton}
-            onPress={() => Alert.alert('Privacy Policy', 'Open Privacy Policy')}
+            onPress={() =>
+              Alert.alert(
+                'Privacy Policy',
+                'This feature will be available in future versions.'
+              )
+            }
           >
             <Text style={styles.listButtonText}>Privacy Policy</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={styles.listButton}
-            onPress={() => Alert.alert('Terms of Use', 'Open Terms of Use')}
+            onPress={() =>
+              Alert.alert(
+                'Terms of Use',
+                'This feature will be available in future versions.'
+              )
+            }
           >
             <Text style={styles.listButtonText}>Terms of Use</Text>
           </TouchableOpacity>
 
-          {/* Кнопка сброса всех результатов */}
-          <TouchableOpacity onPress={resetScoreboard} style={styles.resetButton}>
-            <Text style={styles.resetButtonText}>Reset All Scores</Text>
-          </TouchableOpacity>
-
-          {/* Возврат в меню */}
-          <TouchableOpacity onPress={navigation.goBack} style={styles.exitButton}>
+          <TouchableOpacity
+            onPress={navigation.goBack}
+            style={styles.exitButton}
+          >
             <Text style={styles.exitButtonText}>Return to Menu</Text>
           </TouchableOpacity>
-
         </ScrollView>
       </View>
+
+     
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={ratingModalVisible}
+        onRequestClose={() => setRatingModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Rate Us</Text>
+            <View style={styles.starsContainer}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity
+                  key={star}
+                  onPress={() => setRating(star)}
+                >
+                  <Text style={styles.star}>
+                    {star <= rating ? '★' : '☆'}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={submitRating}
+            >
+              <Text style={styles.modalButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
-
-export default Settings;
-
-// ------------------ Стили ------------------
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0C2A47', // Тёмно-синий цвет фона
+    backgroundColor: '#0C2A47', 
   },
   container: {
     flex: 1,
-    paddingHorizontal: width * 0.05,
+    paddingHorizontal: width * 0.01,
   },
   scrollContainer: {
     paddingBottom: height * 0.03,
@@ -160,8 +202,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   icon: {
-    width: width * 0.3,
-    height: width * 0.3,
+    width: width * 0.5,
+    height: width * 0.5,
     resizeMode: 'contain',
     marginVertical: height * 0.02,
   },
@@ -232,19 +274,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '500',
   },
-  resetButton: {
-    width: '90%',
-    backgroundColor: '#FF6F61',
-    borderRadius: 15,
-    paddingVertical: height * 0.02,
-    alignItems: 'center',
-    marginTop: height * 0.03,
-  },
-  resetButtonText: {
-    fontSize: width * 0.05,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
   exitButton: {
     width: '90%',
     backgroundColor: '#344E71',
@@ -258,4 +287,43 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
+  // Модальное окно для рейтинга
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#FFF',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginBottom: 20,
+    color: '#000',
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  star: {
+    fontSize: 30,
+    marginHorizontal: 5,
+    color: '#FFD700',
+  },
+  modalButton: {
+    backgroundColor: '#0C2A47',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
 });
+export default Settings;

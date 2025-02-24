@@ -18,7 +18,6 @@ const CARD_BG = '#2C6BC7';
 const TEXT_COLOR = '#FFFFFF';
 const TRANSPARENT_WHITE = 'rgba(255,255,255,0.5)';
 
-
 const EVENTS_DATA = [
   {
     id: 1,
@@ -29,9 +28,8 @@ const EVENTS_DATA = [
 
 The Royal Nova Scotia International Tattoo is unique among other Tattoos in the world in that it is more theatrical in nature with a mixture of both military and civilian performers.
 It takes place in the Scotiabank Centre arena, a venue that, to some degree, resembles a traditional theatre in the round. The show is heavily costumed and intensively rehearsed with technical staff, choreographers, assistant directors, wardrobe staff and designers as part of the production team, which also sets it apart from traditional Tattoos.`,
-    ticketsInfo: `No official ticket detail was given besides the date range. Possibly see website for more info.`,
-   
-    image: require('../assets/photo102.jpeg'), 
+    ticketsInfo: "No official ticket detail was given besides the date range. Possibly see website for more info.",
+    image: require('../assets/photo102.jpeg'),
     favorite: false,
     subscribed: false,
   },
@@ -42,7 +40,7 @@ It takes place in the Scotiabank Centre arena, a venue that, to some degree, res
     address: '948 South Bland St, Halifax, Nova Scotia B3H 2S5',
     description: `The Halifax Curling Club, founded in 1824, is one of the oldest active curling clubs in Canada. It has four specially equipped ice pads and is located at 948 South Bland Street. In 1874, they became the first club to build an indoor building in Nova Scotia. 
 The building was located on Tower Road, but was later sold in 1892. In 1899, a new building was built on South Bland Street. This new stadium hosted the first official match between Scotland and Canada, in which the Scots won 84:78. In 1974, the club was rebuilt due to a fire. In 1928, the Halifax Curling Club became the first facility in Nova Scotia with artificial ice.`,
-    ticketsInfo: `REGISTRATION OPENING THURSDAY DEC 12 AT NOON.`,
+    ticketsInfo: "REGISTRATION OPENING THURSDAY DEC 12 AT NOON.",
     image: require('../assets/photo101.jpeg'),
     favorite: false,
     subscribed: false,
@@ -54,19 +52,19 @@ The building was located on Tower Road, but was later sold in 1892. In 1899, a n
     address: '21 Hillside Dr, Hebron, Nova Scotia B5A 5Z6',
     description: `Hebron began as a small town church in 1842. At the time, the congregation was no larger than a few families. Hebron was rebuilt in the 1970s to accommodate the somewhat larger town. The church had several pastors before 1978 when Larry Wynn took up the post. 
 In 1998, it founded the Hebron Christian Academy. In March 2006, the church dedicated a new 4000-seat Worship Center. In 2011, Kevin Miller accepted the call to serve as Senior Pastor. In 2017, Dr. Landon Dowden became the new senior pastor. In 2018, it claimed a membership of 8,000 people.`,
-    ticketsInfo: `Register online on the website`,
+    ticketsInfo: "Register online on the website",
     image: require('../assets/photo104.jpeg'),
     favorite: false,
     subscribed: false,
   },
   {
-    id: 4,    name: 'Nova Scotia in colors',
+    id: 4,
+    name: 'Nova Scotia in colors',
     date: 'September 20–22, 2025',
     address: '1683 Barrington St, Halifax, Nova Scotia B3J 2S9',
     description: `Join us at the unique Nova Scotia in Colors Cultural Festival, which will showcase our region's rich cultural heritage through art, music, dance, and cuisine.
 Arts and Crafts: Explore the work of local artists, craftspeople, and designers. 
-Musical performances: Immerse yourself in the atmosphere of music with live performances by local musicians and ensembles.
-Dancing and Performances: Enjoy traditional dances and cultural performances.
+Musical performances: Immerse yourself in the atmosphere of music with live performances by local musicians and ensembles.Dancing and Performances: Enjoy traditional dances and cultural performances.
 Culinary treats: A variety of dishes and drinks will allow you to immerse yourself in culture through taste.`,
     ticketsInfo: `Admission to the festival is $10/person.
 Tickets can be purchased online on the website or at the entrance to the event.`,
@@ -83,24 +81,19 @@ export function EventsList() {
   const navigation = useNavigation();
   const [events, setEvents] = useState(EVENTS_DATA);
 
-  // Переход к детальному экрану
   const goToEventDetails = (eventItem) => {
     navigation.navigate('EventDetails', {
       eventItem,
-      onToggleFavorite: toggleFavoriteInList, // колбэк для синхронизации
+      onToggleFavorite: toggleFavoriteInList,
     });
   };
 
-  // Тоглим избранное в списке: при добавлении в избранное → в начало, при снятии → в конец
   const toggleFavoriteInList = (id) => {
     setEvents((prev) => {
       const updated = [...prev];
       const idx = updated.findIndex((ev) => ev.id === id);
       if (idx === -1) return prev;
-
       const newItem = { ...updated[idx], favorite: !updated[idx].favorite };
-
-    
       updated[idx] = newItem;
       if (updated[idx].favorite) {
         const [fav] = updated.splice(idx, 1);
@@ -113,13 +106,10 @@ export function EventsList() {
     });
   };
 
-  // Переход к экрану "избранные события"
   const goToFavoritesEvents = () => {
-    // Отбираем только favorite
     const favoriteEvents = events.filter((ev) => ev.favorite);
     navigation.navigate('FavoritesEvents', {
       favoriteEvents,
-      // передаём колбэк, чтобы можно было из избранного экрана убирать/добавлять
       onToggleFavorite: toggleFavoriteInList,
     });
   };
@@ -130,14 +120,14 @@ export function EventsList() {
         {/* Шапка */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Events</Text>
-          {/* Кнопка перехода к избранным событиям */}
           <TouchableOpacity style={styles.headerHeart} onPress={goToFavoritesEvents}>
             <Image
               source={require('../assets/heart.png')}
               style={styles.headerHeartIcon}
             />
           </TouchableOpacity>
-        </View>        {/* Список карточек */}
+        </View>
+        {/* Список карточек */}
         <View style={{ marginHorizontal: 10 }}>
           {events.map((ev) => (
             <TouchableOpacity
@@ -147,7 +137,6 @@ export function EventsList() {
             >
               <Image source={ev.image} style={styles.eventImage} />
               <Text style={styles.eventName}>{ev.name}</Text>
-
               {/* Сердце в карточке */}
               <TouchableOpacity
                 style={[
@@ -183,25 +172,19 @@ export function EventDetails() {
   const [isFavorite, setIsFavorite] = useState(eventItem.favorite);
   const [subscribed, setSubscribed] = useState(eventItem.subscribed);
 
-  // Локальное переключение (для UI)
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
-    // Вызываем колбэк, чтобы список тоже знал об этом
     onToggleFavorite(eventItem.id);
   };
 
   const toggleSubscribe = () => {
     setSubscribed(!subscribed);
-  };
-
-  return (
+  };  return (
     <View style={styles.detailsContainer}>
       <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
-        {/* Обёртка для картинки, в ней будут кнопки "назад" и "сердце" */}
+        {/* Обёртка для картинки, с кнопками ниже SafeArea */}
         <View style={styles.imageWrapper}>
           <Image source={eventItem.image} style={styles.detailsImage} />
-
-          {/* Кнопка "назад" поверх изображения */}
           <TouchableOpacity
             style={styles.backButtonOnImage}
             onPress={() => navigation.goBack()}
@@ -211,8 +194,6 @@ export function EventDetails() {
               style={styles.backIcon}
             />
           </TouchableOpacity>
-
-          {/* Кнопка "сердце" поверх изображения */}
           <TouchableOpacity
             style={styles.heartOnImage}
             onPress={toggleFavorite}
@@ -226,18 +207,14 @@ export function EventDetails() {
             />
           </TouchableOpacity>
         </View>
-
-        {/* Описание (блок снизу со скруглёнными краями) */}
+        {/* Информация */}
         <View style={styles.infoContainer}>
           <Text style={styles.detailsTitle}>{eventItem.name}</Text>
           <Text style={styles.detailsDate}>{eventItem.date}</Text>
           <Text style={styles.detailsAddress}>{eventItem.address}</Text>
-
           <Text style={styles.detailsDescription}>{eventItem.description}</Text>
-
           <Text style={styles.sectionTitle}>Tickets</Text>
           <Text style={styles.detailsTickets}>{eventItem.ticketsInfo}</Text>
-
           <TouchableOpacity
             style={styles.subscribeButton}
             onPress={toggleSubscribe}
@@ -258,11 +235,9 @@ export function EventDetails() {
 export function FavoritesEventsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+  const { favoriteEvents, onToggleFavorite } = route.params;
+  const [favEvents, setFavEvents] = useState(favoriteEvents);
 
-  // Пришли из EventsList
-  const { favoriteEvents, onToggleFavorite } = route.params;  const [favEvents, setFavEvents] = useState(favoriteEvents);
-
-  // При нажатии на карточку — открываем EventDetails
   const goToEventDetails = (eventItem) => {
     navigation.navigate('EventDetails', {
       eventItem,
@@ -270,48 +245,34 @@ export function FavoritesEventsScreen() {
     });
   };
 
-  // Локальная реализация. Если пользователь снимает избранное из экрана "FavoritesEvents"
-  // нужно удалить из списка favEvents
   const handleToggleFavoriteInFavs = (id) => {
-    // Вызываем общий колбэк, чтобы EventsList тоже знал об изменении
     onToggleFavorite(id);
-
-    // Удаляем/добавляем в локальном массиве favEvents
     setFavEvents((prev) => {
       const updated = [...prev];
       const idx = updated.findIndex((ev) => ev.id === id);
-      if (idx === -1) {
-        
-        return prev;
-      }
-
-      // Если снимаем избранное, просто удалим
+      if (idx === -1) return prev;
       updated[idx].favorite = !updated[idx].favorite;
       if (!updated[idx].favorite) {
         updated.splice(idx, 1);
       }
       return updated;
     });
-  };
-
-  return (
+  };  return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Заголовок */}
         <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Favorite Events</Text>
         </View>
-
         <View style={{ marginHorizontal: 10 }}>
           {favEvents.length === 0 && (
             <Text style={{ color: TEXT_COLOR, textAlign: 'center', marginTop: 20 }}>
               No favorite events yet.
             </Text>
           )}
-
           {favEvents.map((ev) => (
             <TouchableOpacity
               key={ev.id}
@@ -320,7 +281,6 @@ export function FavoritesEventsScreen() {
             >
               <Image source={ev.image} style={styles.eventImage} />
               <Text style={styles.eventName}>{ev.name}</Text>
-
               <TouchableOpacity
                 style={[
                   styles.favButton,
@@ -344,14 +304,12 @@ export function FavoritesEventsScreen() {
   );
 }
 
-// Экспортируем всё разом
 export default {
   EventsList,
   EventDetails,
   FavoritesEventsScreen,
 };
 
-/** ================== СТИЛИ ================== */
 const styles = StyleSheet.create({
   backButton: {
     width: 40,
@@ -360,7 +318,6 @@ const styles = StyleSheet.create({
     backgroundColor: TRANSPARENT_WHITE,
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   container: {
     flex: 1,
@@ -375,10 +332,11 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 24,
+    fontSize: 26,
     color: TEXT_COLOR,
     fontWeight: 'bold',
-    textAlign:'center',
+    textAlign: 'center',
+    marginLeft: 40,
   },
   headerHeart: {
     width: 40,
@@ -393,8 +351,6 @@ const styles = StyleSheet.create({
     height: 22,
     tintColor: TEXT_COLOR,
   },
-
-  // ========== Список (карточки) ==========
   eventCard: {
     flexDirection: 'row',
     backgroundColor: CARD_BG,
@@ -404,15 +360,15 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   eventImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 15,  // Скруглённые углы
+    width: 80,
+    height: 80,
+    borderRadius: 15,
     marginRight: 10,
   },
   eventName: {
     flex: 1,
     color: TEXT_COLOR,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   favButton: {
@@ -427,29 +383,27 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: TEXT_COLOR,
-  },  // ========== Детальный экран ==========
+  },
   detailsContainer: {
     flex: 1,
     backgroundColor: MAIN_BG,
   },
-  // Обёртка для картинки, кнопок
   imageWrapper: {
     width: '100%',
-    height: height * 0.4, // Крупнее
+    height: height * 0.4,
     position: 'relative',
-    marginBottom: 10,
-    padding: 10,         // небольшой отступ внутри
+    marginBottom: -20,
+    
   },
   detailsImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 20,    // Скруглённые углы у детальной картинки
+    borderRadius: 20,
     resizeMode: 'cover',
   },
-  // Кнопка "назад" поверх картинки
   backButtonOnImage: {
     position: 'absolute',
-    top: 20,
+    top: 50,
     left: 20,
     width: 44,
     height: 44,
@@ -458,10 +412,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // Кнопка "сердце" поверх картинки
   heartOnImage: {
     position: 'absolute',
-    top: 20,
+    top: 50, // увеличено
     right: 20,
     width: 44,
     height: 44,
@@ -476,14 +429,11 @@ const styles = StyleSheet.create({
     tintColor: '#FFF',
   },
   topHeartIcon: {
-    width: 24,
-    height: 24,
+    width: 24,    height: 24,
     tintColor: '#FFF',
   },
-
   infoContainer: {
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderRadius:30,
     backgroundColor: CARD_BG,
     paddingTop: 20,
     paddingHorizontal: 15,

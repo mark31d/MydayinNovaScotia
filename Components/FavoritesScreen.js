@@ -19,6 +19,7 @@ const TRANSPARENT_WHITE = 'rgba(255,255,255,0.5)';
 export default function FavoritesScreen() {
   const route = useRoute();
   const navigation = useNavigation();
+
   const { places } = route.params;
   const favoritePlaces = places.filter((p) => p.favorite);
 
@@ -28,13 +29,16 @@ export default function FavoritesScreen() {
 
   return (
     <View style={styles.container}>
+  
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
+          <Image
+            source={require('../assets/arrow.png')}
+            style={styles.backIcon}
+          />
         </TouchableOpacity>
+        
         <Text style={styles.headerTitle}>Favorite Places</Text>
-        {/* Placeholder for right side to center title */}
-        <View style={{ width: 40 }} />
       </View>
       
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -63,13 +67,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: MAIN_BG,
-    paddingTop: 40,
-    paddingHorizontal: 10,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
+    paddingTop: 70, 
     paddingBottom: 10,
   },
   backButton: {
@@ -84,16 +87,17 @@ const styles = StyleSheet.create({
   backIcon: {
     width: 24,
     height: 24,
-    tintColor: TEXT_COLOR,
+    tintColor: '#FFF',
   },
   headerTitle: {
-    flex: 1,
-    textAlign: 'center',
+  
+    alignContent:'center',
     fontSize: 22,
     color: TEXT_COLOR,
     fontWeight: 'bold',
   },
   scroll: {
+    paddingHorizontal: 10,
     paddingBottom: 40,
   },
   noFavs: {
@@ -120,6 +124,7 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
     fontWeight: 'bold',
     fontSize: 16,
+    marginBottom: 4,
   },
   addr: {
     color: TEXT_COLOR,

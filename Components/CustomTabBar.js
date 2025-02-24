@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: MAIN_BG,
     alignItems: 'center',
+    padding:15,
     
   },
   tabBarInner: {
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: -5,
   },
   tabItem: {
     width: 60,
@@ -89,6 +90,8 @@ const styles = StyleSheet.create({
     backgroundColor: INACTIVE_BG,
     alignItems: 'center',
     justifyContent: 'center',
+    
+    
   },
   activeTabItem: {
     backgroundColor: ACTIVE_BG,
@@ -97,6 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
+    
   },
   tabIcon: {
     width: 24,

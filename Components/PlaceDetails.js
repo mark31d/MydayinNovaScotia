@@ -26,10 +26,15 @@ export default function PlaceDetails() {
   const route = useRoute();
   const navigation = useNavigation();
   const { place } = route.params;
+  
+  // Состояния для отзывов и прочего
   const [reviews, setReviews] = useState([]);
   const [comment, setComment] = useState('');
   const [photo, setPhoto] = useState(null);
   const [userRating, setUserRating] = useState(0);
+  
+  // Состояние избранного (если не задано, то false)
+  const [isFavorite, setIsFavorite] = useState(place.favorite || false);
 
   useEffect(() => {
     loadReviews();
@@ -82,7 +87,23 @@ export default function PlaceDetails() {
     await saveReviews(updatedReviews);
   };
 
-  return (
+  // Функция переключения избранного
+  const toggleFavorite = () => {
+    const newFavorite = !isFavorite;
+    setIsFavorite(newFavorite);
+  
+    // Вызываем функцию из параметров навигации для синхронизации
+    if (route.params.onToggleFavorite) {
+      route.params.onToggleFavorite(place.id, newFavorite);
+    }
+  
+    // Если необходимо, можно сохранить состояние в AsyncStorage
+    try {
+      AsyncStorage.setItem(`favorite-${place.id}`, JSON.stringify(newFavorite));
+    } catch (error) {
+      console.log('AsyncStorage favorite error:', error);
+    }
+  }; return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 30 }}>
         <View style={styles.imageWrapper}>
@@ -90,11 +111,22 @@ export default function PlaceDetails() {
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.heartButtonTop}>
-            <Image source={require('../assets/heart.png')} style={styles.heartIconTop} />
-          </TouchableOpacity>
+          <TouchableOpacity
+  style={[
+    styles.heartButtonTop,
+    isFavorite && { backgroundColor: '#FFD700' },
+  ]}
+  onPress={toggleFavorite}
+>
+  <Image
+    source={require('../assets/heart.png')}
+    style={[
+      styles.heartIconTop,
+      isFavorite && { tintColor: '#333' },
+    ]}
+  />
+</TouchableOpacity>
         </View>
-
         <View style={styles.mainContainer}>
           <View style={styles.descriptionContainer}>
             <Text style={styles.placeTitle}>{place.name}</Text>
@@ -111,11 +143,10 @@ export default function PlaceDetails() {
               <Text style={styles.infoText}>{place.address}</Text>
             </View>
             <Text style={styles.descriptionText}>{place.description}</Text>
-          </View>         
-           
+          </View>
         </View>
         <View style={styles.mainContainer1}>
-        <View style={styles.reviewsContainer}>
+          <View style={styles.reviewsContainer}>
             <Text style={styles.sectionTitle}>Reviews</Text>
             <View style={styles.reviewsInner}>
               {reviews.map((rev, index) => (
@@ -131,7 +162,6 @@ export default function PlaceDetails() {
                 </View>
               ))}
             </View>
-
             <View style={styles.starRow}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity
@@ -145,7 +175,6 @@ export default function PlaceDetails() {
                 </TouchableOpacity>
               ))}
             </View>
-
             <View style={styles.addCommentBox}>
               {photo && <Image source={{ uri: photo }} style={styles.previewPhoto} />}
               <View style={styles.commentRow}>
@@ -164,12 +193,13 @@ export default function PlaceDetails() {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
-          </View>
+          </View>        </View>
       </ScrollView>
     </SafeAreaView>
   );
-}const styles = StyleSheet.create({
+}
+
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: BLUE_BG,
@@ -187,8 +217,7 @@ export default function PlaceDetails() {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    padding:5,
-    borderRadius:15,
+    borderRadius: 15,
   },
   backButton: {
     position: 'absolute',
@@ -223,21 +252,18 @@ export default function PlaceDetails() {
     tintColor: TEXT_COLOR,
   },
   mainContainer: {
-    
     flex: 1,
-    borderRadius:30,
-   
+    borderRadius: 30,
     backgroundColor: CARD_BG,
     marginTop: -20,
     marginHorizontal: 8,
     padding: 10,
   },
   mainContainer1: {
-    
     flex: 1,
-    borderRadius:30,
+    borderRadius: 30,
     backgroundColor: CARD_BG,
-    marginTop: 2,
+    marginTop: -10,
     marginHorizontal: 8,
     padding: 10,
   },
@@ -391,8 +417,7 @@ export default function PlaceDetails() {
     height: 36,
     borderRadius: 18,
     backgroundColor: WHITE_TRANSPARENT,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center',    justifyContent: 'center',
   },
   iconSend: {
     width: 20,
