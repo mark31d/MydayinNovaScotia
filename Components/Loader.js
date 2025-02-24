@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     backgroundColor: '#FFFFFF',
-    left: '50%',     // центрируем по горизонтали
-    top: 0,          // линия будет выходить "из центра" вверх
+    left: '50%',    
+    top: 0,         
   },
 });
