@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Image,
   Easing,
+  ImageBackground,
 } from 'react-native';
 
 const Loader = ({ onEnd }) => {
@@ -47,7 +48,11 @@ const Loader = ({ onEnd }) => {
   const linesArray = [...Array(linesCount).keys()];
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.container}
+      resizeMode="cover"
+    >
       <Animated.View style={[styles.overlay, { opacity: disappearingAnim }]}>
         <Animated.Image
           source={require('../assets/Logo.png')}
@@ -73,7 +78,7 @@ const Loader = ({ onEnd }) => {
                 styles.spinnerLine,
                 {
                   transform: [
-                    { translateX: -1 }, // чтобы линия была по центру
+                    { translateX: -1 },
                     { rotate: `${(360 / linesCount) * i}deg` },
                   ],
                 },
@@ -82,7 +87,7 @@ const Loader = ({ onEnd }) => {
           ))}
         </Animated.View>
       </Animated.View>
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -91,7 +96,6 @@ export default Loader;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#143468',
   },
   overlay: {
     flex: 1,
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     backgroundColor: '#FFFFFF',
-    left: '50%',    
-    top: 0,         
+    left: '50%',
+    top: 0,
   },
 });

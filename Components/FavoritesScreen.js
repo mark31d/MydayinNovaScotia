@@ -6,7 +6,8 @@ import {
   ScrollView, 
   Image, 
   TouchableOpacity, 
-  Dimensions 
+  Dimensions,
+  ImageBackground
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
@@ -28,45 +29,54 @@ export default function FavoritesScreen() {
   };
 
   return (
-    <View style={styles.container}>
-  
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Image
-            source={require('../assets/arrow.png')}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        
-        <Text style={styles.headerTitle}>Favorite Places</Text>
-      </View>
-      
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {favoritePlaces.length === 0 && (
-          <Text style={styles.noFavs}>No favorites yet</Text>
-        )}
-        {favoritePlaces.map((pl) => (
-          <TouchableOpacity
-            key={pl.id}
-            style={styles.card}
-            onPress={() => goToDetails(pl)}
-          >
-            <Image source={pl.image} style={styles.img} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.name}>{pl.name}</Text>
-              <Text style={styles.addr}>{pl.address}</Text>
-            </View>
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Image
+              source={require('../assets/arrow.png')}
+              style={styles.backIcon}
+            />
           </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
+          <Text style={styles.headerTitle}>Favorite Places</Text>
+        </View>
+        
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {favoritePlaces.length === 0 && (
+            <Text style={styles.noFavs}>No favorites yet</Text>
+          )}
+          {favoritePlaces.map((pl) => (
+            <TouchableOpacity
+              key={pl.id}
+              style={styles.card}
+              onPress={() => goToDetails(pl)}
+            >
+              <Image source={pl.image} style={styles.img} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.name}>{pl.name}</Text>
+                <Text style={styles.addr}>{pl.address}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: MAIN_BG,
+    backgroundColor: 'transparent',
   },
   header: {
     flexDirection: 'row',
@@ -90,7 +100,6 @@ const styles = StyleSheet.create({
     tintColor: '#FFF',
   },
   headerTitle: {
-  
     alignContent:'center',
     fontSize: 22,
     color: TEXT_COLOR,

@@ -10,21 +10,22 @@ import {
   Dimensions,
   SafeAreaView,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-// Импортируем места с координатами
+// Імпорт даних (наприклад, місця з координатами)
 import PLACES_WITH_COORDS from './PlaceWithCoords';
 
 const { width, height } = Dimensions.get('window');
-const MAIN_BG = '#143468';   // общий тёмно-синий
-const CARD_BG = '#2C6BC7';   // карточки
+const MAIN_BG = '#143468'; // Запасний фон, якщо back.png не завантажиться
+const CARD_BG = '#2C6BC7';
 const TEXT_COLOR = '#FFFFFF';
 const TRANSPARENT_WHITE = 'rgba(255,255,255,0.5)';
 
-/** Тестовые данные */
+/** Тестові дані */
 const INITIAL_ROUTES = [
   {
     id: 1,
@@ -54,9 +55,7 @@ const INITIAL_ROUTES = [
   },
 ];
 
-/** ==========================
- *  1) Главный экран (MyDayList)
- * ========================== */
+/** ===== 1) Екран MyDayList ===== */
 export function MyDayList() {
   const navigation = useNavigation();
   const [myRoutes, setMyRoutes] = useState([]);
@@ -119,35 +118,41 @@ export function MyDayList() {
     navigation.navigate('AddRouteStep1', {
       onAddRoute: handleAddRoute,
     });
-  };  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>My day</Text>
-        </View>
-        <View style={{ marginHorizontal: 10 }}>
-          {myRoutes.map((r) => (
-            <TouchableOpacity
-              key={r.id}
-              style={styles.routeCard}
-              onPress={() => goToRouteDetails(r)}
-            >
-              <Image source={r.mainImage} style={styles.routeImage} />
-              <Text style={styles.routeName}>{r.title}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <TouchableOpacity style={styles.addButton} onPress={goToAddRoute}>
-          <Text style={styles.addButtonText}>Add  +</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>My day</Text>
+          </View>
+          <View style={{ marginHorizontal: 10 }}>
+            {myRoutes.map((r) => (
+              <TouchableOpacity
+                key={r.id}
+                style={styles.routeCard}
+                onPress={() => goToRouteDetails(r)}
+              >
+                <Image source={r.mainImage} style={styles.routeImage} />
+                <Text style={styles.routeName}>{r.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity style={styles.addButton} onPress={goToAddRoute}>
+            <Text style={styles.addButtonText}>Add  +</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
-/** ============================
- *  2) Экран деталей (RouteDetails)
- * ============================ */
+/** ===== 2) Екран RouteDetails ===== */
 export function RouteDetails() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -167,65 +172,68 @@ export function RouteDetails() {
   };
 
   return (
-    <View style={styles.detailsContainer}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <View style={styles.bigImageWrapper}>
-          <Image source={data.mainImage} style={styles.bigImage} />
-          <TouchableOpacity
-            style={styles.backButtonOnImage}
-            onPress={() => navigation.goBack()}
-          >
-            <Image
-              source={require('../assets/arrow.png')}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.editOnImage}
-            onPress={handleEdit}
-          >
-            <Image
-              source={require('../assets/mark.png')}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.routeTitle}>{data.title}</Text>
-          <Text style={styles.routeDate}>{data.date}</Text>
-          <Text style={styles.routeDescription}>{data.description}</Text>
-          <Text style={styles.sectionTitle}>Place</Text>
-          {data.places.map((p) => (
-            <View key={p.id} style={styles.placeItem}>
-              <Image source={p.image} style={styles.placeIcon} />
-              <Text style={styles.placeText}>{p.name}</Text>
-            </View>
-          ))}
-          {data.images.length > 0 && (
-            <View style={styles.imagesRow}>
-              {data.images.map((img, idx) => (
-                <Image key={idx} source={img} style={styles.smallImage} />
-              ))}
-            </View>
-          )}
-          {data.diary ? (
-            <View style={styles.diaryContainer}>
-              <Text style={styles.diaryText}>{data.diary}</Text>
-            </View>
-          ) : null}
-        </View>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.deleteButtonText}>Delete</Text>
-            <Image source={require('../assets/bin.png')} style={styles.binIcon} />
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={[styles.detailsContainer, { backgroundColor: 'transparent' }]}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <View style={styles.bigImageWrapper}>
+            <Image source={data.mainImage} style={styles.bigImage} />
+            <TouchableOpacity
+              style={styles.backButtonOnImage}
+              onPress={() => navigation.goBack()}
+            >
+              <Image
+                source={require('../assets/arrow.png')}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.editOnImage} onPress={handleEdit}>
+              <Image
+                source={require('../assets/mark.png')}
+                style={styles.editIcon}
+              />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.routeTitle}>{data.title}</Text>
+            <Text style={styles.routeDate}>{data.date}</Text>
+            <Text style={styles.routeDescription}>{data.description}</Text>
+            <Text style={styles.sectionTitle}>Place</Text>
+            {data.places.map((p) => (
+              <View key={p.id} style={styles.placeItem}>
+                <Image source={p.image} style={styles.placeIcon} />
+                <Text style={styles.placeText}>{p.name}</Text>
+              </View>
+            ))}
+            {data.images.length > 0 && (
+              <View style={styles.imagesRow}>
+                {data.images.map((img, idx) => (
+                  <Image key={idx} source={img} style={styles.smallImage} />
+                ))}
+              </View>
+            )}
+            {data.diary ? (
+              <View style={styles.diaryContainer}>
+                <Text style={styles.diaryText}>{data.diary}</Text>
+              </View>
+            ) : null}
+          </View>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.deleteButtonText}>Delete</Text>
+              <Image source={require('../assets/bin.png')} style={styles.binIcon} />
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
-}/** ===================================================
- *  3) Экран добавления/редактирования (AddRouteStep1)
- * =================================================== */
+}
+
+/** ===== 3) Екран AddRouteStep1 ===== */
 export function AddRouteStep1() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -233,16 +241,12 @@ export function AddRouteStep1() {
   const [title, setTitle] = useState(existingRoute?.title || '');
   const [date, setDate] = useState(existingRoute?.date || '');
   const [desc, setDesc] = useState(existingRoute?.description || '');
-
-  // Состояние для основного изображения маршрута
   const [mainImage, setMainImage] = useState(existingRoute?.mainImage || null);
 
-  // Используем импортированные места и добавляем свойство selected
   const allPlaces = PLACES_WITH_COORDS.map((p) => ({
     ...p,
     selected: existingRoute ? !!existingRoute.places.find((rp) => rp.id === p.id) : false,
   }));
-
   const [places, setPlaces] = useState(allPlaces);
 
   const goBack = () => navigation.goBack();
@@ -301,70 +305,78 @@ export function AddRouteStep1() {
     setPlaces((prev) =>
       prev.map((p) => (p.id === id ? { ...p, selected: !p.selected } : p))
     );
-  };  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.addHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
-        </TouchableOpacity>
-        <Text style={styles.addHeaderTitle}>Add route</Text>
-        <TouchableOpacity style={styles.saveButton} onPress={handleNext}>
-          <Image source={require('../assets/mark.png')} style={styles.saveIcon} />
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <TouchableOpacity style={styles.imageSelector} onPress={pickMainImage}>
-          {mainImage ? (
-            <Image source={mainImage} style={styles.bigTopImage} />
-          ) : (
-            <Image
-              source={require('../assets/gallery.png')}
-              style={styles.bigTopImage}
-            />
-          )}
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          placeholder="Title"
-          placeholderTextColor="#999"
-          value={title}
-          onChangeText={setTitle}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Date"
-          placeholderTextColor="#999"
-          value={date}
-          onChangeText={setDate}
-        />
-        <TextInput
-          style={[styles.input, { height: 60 }]}
-          multiline
-          placeholder="Description"
-          placeholderTextColor="#999"
-          value={desc}
-          onChangeText={setDesc}
-        />
-        <Text style={styles.sectionTitle}>Add a place to a route</Text>
-        {places.map((p) => (
-          <TouchableOpacity
-            key={p.id}
-            style={styles.placeSelectRow}
-            onPress={() => toggleSelectPlace(p.id)}
-          >
-            <View style={styles.placeRowLeft}>
-              <Image source={p.image} style={styles.placeIconSmall} />
-              <Text style={styles.placeRowText}>{p.name}</Text>
-            </View>
-            <View style={[styles.circleCheck, p.selected && { backgroundColor: '#FFFFFF' }]} />
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        <View style={styles.addHeader}>
+          <TouchableOpacity style={styles.backButton} onPress={goBack}>
+            <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
           </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+          <Text style={styles.addHeaderTitle}>Add route</Text>
+          <TouchableOpacity style={styles.saveButton} onPress={handleNext}>
+            <Image source={require('../assets/mark.png')} style={styles.saveIcon} />
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <TouchableOpacity style={styles.imageSelector} onPress={pickMainImage}>
+            {mainImage ? (
+              <Image source={mainImage} style={styles.bigTopImage} />
+            ) : (
+              <Image
+                source={require('../assets/gallery.png')}
+                style={styles.bigTopImage}
+              />
+            )}
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Title"
+            placeholderTextColor="#999"
+            value={title}
+            onChangeText={setTitle}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Date"
+            placeholderTextColor="#999"
+            value={date}
+            onChangeText={setDate}
+          />
+          <TextInput
+            style={[styles.input, { height: 60 }]}
+            multiline
+            placeholder="Description"
+            placeholderTextColor="#999"
+            value={desc}
+            onChangeText={setDesc}
+          />
+          <Text style={styles.sectionTitle}>Add a place to a route</Text>
+          {places.map((p) => (
+            <TouchableOpacity
+              key={p.id}
+              style={styles.placeSelectRow}
+              onPress={() => toggleSelectPlace(p.id)}
+            >
+              <View style={styles.placeRowLeft}>
+                <Image source={p.image} style={styles.placeIconSmall} />
+                <Text style={styles.placeRowText}>{p.name}</Text>
+              </View>
+              <View style={[styles.circleCheck, p.selected && { backgroundColor: '#FFFFFF' }]} />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
-/** Шаг 2: добавляем фото (через image-picker), заметки, сохраняем */
+/** ===== 4) Екран AddRouteStep2 ===== */
 export function AddRouteStep2() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -409,42 +421,49 @@ export function AddRouteStep2() {
       onAddRoute(updatedRoute);
     }
     navigation.popToTop();
-  };  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.addHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
-        </TouchableOpacity>
-        <Text style={styles.addHeaderTitle}>Add route</Text>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Image source={require('../assets/mark.png')} style={styles.saveIcon} />
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <ScrollView horizontal contentContainerStyle={styles.photoRow} showsHorizontalScrollIndicator={false}>
-          {images.map((img, index) => (
-            <TouchableOpacity key={index} onPress={() => pickAdditionalImage(index)}>
-              <Image source={img} style={styles.additionalImage} />
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity style={styles.addImageButtonRow} onPress={() => pickAdditionalImage()}>
-            <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 25 }}>+</Text>
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        <View style={styles.addHeader}>
+          <TouchableOpacity style={styles.backButton} onPress={goBack}>
+            <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
           </TouchableOpacity>
+          <Text style={styles.addHeaderTitle}>Add route</Text>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Image source={require('../assets/mark.png')} style={styles.saveIcon} />
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <ScrollView horizontal contentContainerStyle={styles.photoRow} showsHorizontalScrollIndicator={false}>
+            {images.map((img, index) => (
+              <TouchableOpacity key={index} onPress={() => pickAdditionalImage(index)}>
+                <Image source={img} style={styles.additionalImage} />
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={styles.addImageButtonRow} onPress={() => pickAdditionalImage()}>
+              <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 25 }}>+</Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <TextInput
+            style={[styles.input, { height: 80 }]}
+            multiline
+            placeholder="Notes"
+            placeholderTextColor="#999"
+            value={notes}
+            onChangeText={setNotes}
+          />
         </ScrollView>
-        <TextInput
-          style={[styles.input, { height: 80 }]}
-          multiline
-          placeholder="Notes"
-          placeholderTextColor="#999"
-          value={notes}
-          onChangeText={setNotes}
-        />
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
-/** Экспортируем все 4 экрана в одном объекте */
 export default {
   MyDayList,
   RouteDetails,
@@ -454,6 +473,11 @@ export default {
 
 // ===== Стили =====
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   imageSelector: {
     alignItems: 'center',
     marginBottom: 15,
@@ -468,7 +492,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: MAIN_BG,
+    
   },
   header: {
     marginHorizontal: 20,
@@ -583,10 +607,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#FFF',
     marginBottom: 15,
-    flexWrap: 'wrap', // позволяет переносить текст
+    flexWrap: 'wrap',
   },
   sectionTitle: {
-    fontSize: 16,    color: '#FFF',
+    fontSize: 16,
+    color: '#FFF',
     fontWeight: 'bold',
     marginBottom: 8,
   },
@@ -594,7 +619,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
-  
   },
   placeIcon: {
     width: 30,
@@ -606,7 +630,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 14,
     marginBottom: 15,
-    flexWrap: 'wrap', 
+    flexWrap: 'wrap',
   },
   imagesRow: {
     flexDirection: 'row',
@@ -717,7 +741,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    margin:5,
+    margin: 5,
   },
   placeIconSmall: {
     width: 40,
@@ -759,3 +783,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+

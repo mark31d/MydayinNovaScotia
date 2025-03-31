@@ -2,20 +2,28 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Switch,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
   SafeAreaView,
   Image,
-  Alert,
+  TouchableOpacity,
+  StyleSheet,
   ScrollView,
+  TextInput,
+  Dimensions,
   Modal,
+  ImageBackground,
+  Alert,
 } from 'react-native';
 import { useAudio } from './AudioContext';   
 import { useVibration } from './VibrationContext'; 
 
 const { width, height } = Dimensions.get('window');
+
+const BLUE_BG = '#143468';
+const CARD_BG = '#2C6BC7';
+const WHITE_TRANSPARENT = 'rgba(255,255,255,0.5)';
+const STAR_COLOR = '#FFCC00';
+const TEXT_COLOR = '#FFFFFF';
+const GRAY_COLOR = '#999';
 
 const Settings = ({ navigation }) => {
   const { isMusicPlaying, setIsMusicPlaying, volume, setVolume } = useAudio();
@@ -41,149 +49,156 @@ const Settings = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text style={styles.title}>Settings</Text>
-          <Image
-            source={require('../assets/settingslog.png')}
-            style={styles.icon}
-          />
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <Text style={styles.title}>Settings</Text>
+            <Image
+              source={require('../assets/settingslog.png')}
+              style={styles.icon}
+            />
 
-          <TouchableOpacity
-            style={styles.rateButton}
-            onPress={() => {
-              setRating(0);
-              setRatingModalVisible(true);
-            }}
-          >
-            <Text style={styles.rateButtonText}>Rate us!</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.rateButton}
+              onPress={() => {
+                setRating(0);
+                setRatingModalVisible(true);
+              }}
+            >
+              <Text style={styles.rateButtonText}>Rate us!</Text>
+            </TouchableOpacity>
 
-          <View style={styles.settingsBlock}>
-            <View style={styles.settingItem}>
-              <Text style={styles.settingItemText}>Turn Music On/Off</Text>
-              <Switch
-                value={isMusicPlaying}
-                onValueChange={setIsMusicPlaying}
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={isMusicPlaying ? '#f5dd4b' : '#f4f3f4'}
-              />
-            </View>
-
-           
-            <View style={styles.settingItem}>
-              <Text style={styles.settingItemText}>
-                Music Volume: {Math.round(localVolume * 100)}%
-              </Text>
-              <View style={styles.volumeControls}>
-                <TouchableOpacity
-                  onPress={() => handleVolumeChange(-0.1)}
-                  style={styles.volumeButton}
-                >
-                  <Text style={styles.volumeButtonText}>-</Text>
+            <View style={styles.settingsBlock}>
+              <View style={styles.settingItem}>
+                <Text style={styles.settingItemText}>Turn Music On/Off</Text>
+                <TouchableOpacity onPress={() => setIsMusicPlaying(!isMusicPlaying)}>
+                  <Text style={styles.settingItemText}>
+                    {isMusicPlaying ? 'On' : 'Off'}
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleVolumeChange(0.1)}
-                  style={styles.volumeButton}
-                >
-                  <Text style={styles.volumeButtonText}>+</Text>
+              </View>
+
+              <View style={styles.settingItem}>
+                <Text style={styles.settingItemText}>
+                  Music Volume: {Math.round(localVolume * 100)}%
+                </Text>
+                <View style={styles.volumeControls}>
+                  <TouchableOpacity
+                    onPress={() => handleVolumeChange(-0.1)}
+                    style={styles.volumeButton}
+                  >
+                    <Text style={styles.volumeButtonText}>-</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleVolumeChange(0.1)}
+                    style={styles.volumeButton}
+                  >
+                    <Text style={styles.volumeButtonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.settingItem}>
+                <Text style={styles.settingItemText}>Enable Vibration</Text>
+                <TouchableOpacity onPress={() => setVibrationOn(!vibrationOn)}>
+                  <Text style={styles.settingItemText}>
+                    {vibrationOn ? 'On' : 'Off'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
-
-           
-            <View style={styles.settingItem}>
-              <Text style={styles.settingItemText}>Enable Vibration</Text>
-              <Switch
-                value={vibrationOn}
-                onValueChange={setVibrationOn}
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={vibrationOn ? '#f5dd4b' : '#f4f3f4'}
-              />
-            </View>
-          </View>
-          <TouchableOpacity
-            style={styles.listButton}
-            onPress={() =>
-              Alert.alert(
-                'Developer Website',
-                'This feature will be available in future versions.'
-              )
-            }
-          >
-            <Text style={styles.listButtonText}>Developer Website</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.listButton}
-            onPress={() =>
-              Alert.alert(
-                'Privacy Policy',
-                'This feature will be available in future versions.'
-              )
-            }
-          >
-            <Text style={styles.listButtonText}>Privacy Policy</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.listButton}
-            onPress={() =>
-              Alert.alert(
-                'Terms of Use',
-                'This feature will be available in future versions.'
-              )
-            }
-          >
-            <Text style={styles.listButtonText}>Terms of Use</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={navigation.goBack}
-            style={styles.exitButton}
-          >
-            <Text style={styles.exitButtonText}>Return to Menu</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-
-     
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={ratingModalVisible}
-        onRequestClose={() => setRatingModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Rate Us</Text>
-            <View style={styles.starsContainer}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <TouchableOpacity
-                  key={star}
-                  onPress={() => setRating(star)}
-                >
-                  <Text style={styles.star}>
-                    {star <= rating ? '★' : '☆'}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
             <TouchableOpacity
-              style={styles.modalButton}
-              onPress={submitRating}
+              style={styles.listButton}
+              onPress={() =>
+                Alert.alert(
+                  'Developer Website',
+                  'This feature will be available in future versions.'
+                )
+              }
             >
-              <Text style={styles.modalButtonText}>Submit</Text>
+              <Text style={styles.listButtonText}>Developer Website</Text>
             </TouchableOpacity>
-          </View>
+            <TouchableOpacity
+              style={styles.listButton}
+              onPress={() =>
+                Alert.alert(
+                  'Privacy Policy',
+                  'This feature will be available in future versions.'
+                )
+              }
+            >
+              <Text style={styles.listButtonText}>Privacy Policy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.listButton}
+              onPress={() =>
+                Alert.alert(
+                  'Terms of Use',
+                  'This feature will be available in future versions.'
+                )
+              }
+            >
+              <Text style={styles.listButtonText}>Terms of Use</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={navigation.goBack}
+              style={styles.exitButton}
+            >
+              <Text style={styles.exitButtonText}>Return to Menu</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
-      </Modal>
-    </SafeAreaView>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={ratingModalVisible}
+          onRequestClose={() => setRatingModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Rate Us</Text>
+              <View style={styles.starsContainer}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <TouchableOpacity
+                    key={star}
+                    onPress={() => setRating(star)}
+                  >
+                    <Text style={styles.star}>
+                      {star <= rating ? '★' : '☆'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={submitRating}
+              >
+                <Text style={styles.modalButtonText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: '#0C2A47', 
+    backgroundColor: 'transparent',
   },
   container: {
     flex: 1,
@@ -287,7 +302,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  // Модальное окно для рейтинга
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -326,4 +340,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
 export default Settings;

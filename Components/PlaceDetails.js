@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   Dimensions,
+  ImageBackground
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,13 +28,13 @@ export default function PlaceDetails() {
   const navigation = useNavigation();
   const { place } = route.params;
   
-  // Состояния для отзывов и прочего
+  // Стан для відгуків та інших даних
   const [reviews, setReviews] = useState([]);
   const [comment, setComment] = useState('');
   const [photo, setPhoto] = useState(null);
   const [userRating, setUserRating] = useState(0);
   
-  // Состояние избранного (если не задано, то false)
+  // Стан для "улюбленості"
   const [isFavorite, setIsFavorite] = useState(place.favorite || false);
 
   useEffect(() => {
@@ -87,122 +88,133 @@ export default function PlaceDetails() {
     await saveReviews(updatedReviews);
   };
 
-  // Функция переключения избранного
   const toggleFavorite = () => {
     const newFavorite = !isFavorite;
     setIsFavorite(newFavorite);
   
-    // Вызываем функцию из параметров навигации для синхронизации
     if (route.params.onToggleFavorite) {
       route.params.onToggleFavorite(place.id, newFavorite);
     }
   
-    // Если необходимо, можно сохранить состояние в AsyncStorage
     try {
       AsyncStorage.setItem(`favorite-${place.id}`, JSON.stringify(newFavorite));
     } catch (error) {
       console.log('AsyncStorage favorite error:', error);
     }
-  }; return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 30 }}>
-        <View style={styles.imageWrapper}>
-          <Image source={place.image} style={styles.topImage} />
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity
-  style={[
-    styles.heartButtonTop,
-    isFavorite && { backgroundColor: '#FFD700' },
-  ]}
-  onPress={toggleFavorite}
->
-  <Image
-    source={require('../assets/heart.png')}
-    style={[
-      styles.heartIconTop,
-      isFavorite && { tintColor: '#333' },
-    ]}
-  />
-</TouchableOpacity>
-        </View>
-        <View style={styles.mainContainer}>
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.placeTitle}>{place.name}</Text>
-            <View style={styles.ratingRow}>
-              <Text style={styles.ratingNumber}>{place.rating.toFixed(1)}</Text>
-              <Text style={styles.ratingStars}>★ ★ ★ ★ ★</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Image source={require('../assets/time.png')} style={styles.iconSmall} />
-              <Text style={styles.infoText}>{place.schedule}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Image source={require('../assets/pin.png')} style={styles.iconSmall} />
-              <Text style={styles.infoText}>{place.address}</Text>
-            </View>
-            <Text style={styles.descriptionText}>{place.description}</Text>
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 30 }}>
+          <View style={styles.imageWrapper}>
+            <Image source={place.image} style={styles.topImage} />
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+              <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.heartButtonTop,
+                isFavorite && { backgroundColor: '#FFD700' },
+              ]}
+              onPress={toggleFavorite}
+            >
+              <Image
+                source={require('../assets/heart.png')}
+                style={[
+                  styles.heartIconTop,
+                  isFavorite && { tintColor: '#333' },
+                ]}
+              />
+            </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.mainContainer1}>
-          <View style={styles.reviewsContainer}>
-            <Text style={styles.sectionTitle}>Reviews</Text>
-            <View style={styles.reviewsInner}>
-              {reviews.map((rev, index) => (
-                <View key={index} style={styles.reviewCard}>
-                  <View style={styles.reviewHeader}>
-                    <Text style={styles.reviewUser}>{rev.user}</Text>
-                    <Text style={styles.reviewRating}>{'★'.repeat(rev.rating)}</Text>
-                  </View>
-                  {rev.photo && (
-                    <Image source={{ uri: rev.photo }} style={styles.reviewPhoto} />
-                  )}
-                  <Text style={styles.reviewText}>{rev.text}</Text>
-                </View>
-              ))}
-            </View>
-            <View style={styles.starRow}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <TouchableOpacity
-                  key={star}
-                  onPress={() => setUserRating(star)}
-                  style={styles.starTouch}
-                >
-                  <Text style={[styles.starPick, { color: star <= userRating ? STAR_COLOR : GRAY_COLOR }]}>
-                    ★
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View style={styles.addCommentBox}>
-              {photo && <Image source={{ uri: photo }} style={styles.previewPhoto} />}
-              <View style={styles.commentRow}>
-                <TextInput
-                  style={styles.commentInput}
-                  placeholder="Leave review..."
-                  placeholderTextColor={GRAY_COLOR}
-                  value={comment}
-                  onChangeText={setComment}
-                />
-                <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
-                  <Image source={require('../assets/gallery.png')} style={styles.iconGallery} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.sendButton} onPress={addReview}>
-                  <Image source={require('../assets/send.png')} style={styles.iconSend} />
-                </TouchableOpacity>
+          <View style={styles.mainContainer}>
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.placeTitle}>{place.name}</Text>
+              <View style={styles.ratingRow}>
+                <Text style={styles.ratingNumber}>{place.rating.toFixed(1)}</Text>
+                <Text style={styles.ratingStars}>★ ★ ★ ★ ★</Text>
               </View>
+              <View style={styles.infoRow}>
+                <Image source={require('../assets/time.png')} style={styles.iconSmall} />
+                <Text style={styles.infoText}>{place.schedule}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Image source={require('../assets/pin.png')} style={styles.iconSmall} />
+                <Text style={styles.infoText}>{place.address}</Text>
+              </View>
+              <Text style={styles.descriptionText}>{place.description}</Text>
             </View>
-          </View>        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </View>
+          <View style={styles.mainContainer1}>
+            <View style={styles.reviewsContainer}>
+              <Text style={styles.sectionTitle}>Reviews</Text>
+              <View style={styles.reviewsInner}>
+                {reviews.map((rev, index) => (
+                  <View key={index} style={styles.reviewCard}>
+                    <View style={styles.reviewHeader}>
+                      <Text style={styles.reviewUser}>{rev.user}</Text>
+                      <Text style={styles.reviewRating}>{'★'.repeat(rev.rating)}</Text>
+                    </View>
+                    {rev.photo && (
+                      <Image source={{ uri: rev.photo }} style={styles.reviewPhoto} />
+                    )}
+                    <Text style={styles.reviewText}>{rev.text}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={styles.starRow}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <TouchableOpacity
+                    key={star}
+                    onPress={() => setUserRating(star)}
+                    style={styles.starTouch}
+                  >
+                    <Text style={[styles.starPick, { color: star <= userRating ? STAR_COLOR : GRAY_COLOR }]}>
+                      ★
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={styles.addCommentBox}>
+                {photo && <Image source={{ uri: photo }} style={styles.previewPhoto} />}
+                <View style={styles.commentRow}>
+                  <TextInput
+                    style={styles.commentInput}
+                    placeholder="Leave review..."
+                    placeholderTextColor={GRAY_COLOR}
+                    value={comment}
+                    onChangeText={setComment}
+                  />
+                  <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
+                    <Image source={require('../assets/gallery.png')} style={styles.iconGallery} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.sendButton} onPress={addReview}>
+                    <Image source={require('../assets/send.png')} style={styles.iconSend} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>        
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: BLUE_BG,
+    backgroundColor: 'transparent',
   },
   scroll: {
     flex: 1,
@@ -417,7 +429,8 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     backgroundColor: WHITE_TRANSPARENT,
-    alignItems: 'center',    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconSend: {
     width: 20,
@@ -425,3 +438,4 @@ const styles = StyleSheet.create({
     tintColor: TEXT_COLOR,
   },
 });
+

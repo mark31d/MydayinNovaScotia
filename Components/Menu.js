@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   SafeAreaView,
+  ImageBackground,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
@@ -87,119 +88,134 @@ export default function Menu() {
 
   const goToFavorites = () => {
     navigation.navigate('FavoritesScreen', { places });
-  };  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Best places</Text>
-          <View style={styles.headerIcons}>
-            <TouchableOpacity 
-              style={styles.iconButton} 
-              onPress={() => navigation.navigate('MiniGame')}
-            >
-              <Image
-                source={require('../assets/console.png')}
-                style={styles.iconImage}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={goToFavorites}>
-              <Image
-                source={require('../assets/heart.png')}
-                style={styles.iconImage}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.mapContainer}>
-          <MapView ref={mapRef} style={styles.map} initialRegion={INITIAL_REGION}>
-            {displayedPlaces.map((pl, i) => (
-              <Marker
-                key={pl.id}
-                coordinate={pl.coords}
-                title={pl.name}
-                pinColor={i === mapIndex ? 'red' : 'purple'}
-              />
-            ))}
-          </MapView>
-          <TouchableOpacity style={styles.leftArrow} onPress={goLeft}>
-            <Text style={styles.arrowText}>←</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.rightArrow} onPress={goRight}>
-            <Text style={styles.arrowText}>→</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryScroll}
-          style={{ backgroundColor: MAIN_BG }}
-        >
-          {CATEGORIES.map((cat) => (
-            <TouchableOpacity
-              key={cat}
-              style={[
-                styles.categoryButton,
-                selectedCategory === cat && styles.categoryButtonActive,
-              ]}
-              onPress={() =>
-                setSelectedCategory(selectedCategory === cat ? null : cat)
-              }
-            >
-              <Text style={styles.categoryText}>{cat}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <View style={styles.placeContainer}>
-          {displayedPlaces.map((placeItem) => (
-            <TouchableOpacity
-              key={placeItem.id}
-              style={styles.placeCard}
-              onPress={() =>
-                navigation.navigate('PlaceDetails', {
-                  place: placeItem,
-                  onToggleFavorite: (id, newFavorite) => {
-                    setPlaces((prev) =>
-                      prev.map((p) =>
-                        p.id === id ? { ...p, favorite: newFavorite } : p
-                      )
-                    );
-                  },
-                })
-              }
-            >
-              <Image source={placeItem.image} style={styles.placeImage} />
-              <Text style={styles.placeName}>{placeItem.name}</Text>
-              <TouchableOpacity
-                style={[
-                  styles.heartButton,
-                  placeItem.favorite && { backgroundColor: '#FFD700' },
-                ]}
-                onPress={() => {
-                  setPlaces((prev) =>
-                    prev.map((p) =>
-                      p.id === placeItem.id ? { ...p, favorite: !p.favorite } : p
-                    )
-                  );
-                }}
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Best places</Text>
+            <View style={styles.headerIcons}>
+              <TouchableOpacity 
+                style={styles.iconButton} 
+                onPress={() => navigation.navigate('MiniGame')}
               >
                 <Image
-                  source={require('../assets/heart.png')}
-                  style={[
-                    styles.heartIcon,
-                    placeItem.favorite && { tintColor: '#333' },
-                  ]}
+                  source={require('../assets/console.png')}
+                  style={styles.iconImage}
                 />
               </TouchableOpacity>
+              <TouchableOpacity style={styles.iconButton} onPress={goToFavorites}>
+                <Image
+                  source={require('../assets/heart.png')}
+                  style={styles.iconImage}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.mapContainer}>
+            <MapView ref={mapRef} style={styles.map} initialRegion={INITIAL_REGION}>
+              {displayedPlaces.map((pl, i) => (
+                <Marker
+                  key={pl.id}
+                  coordinate={pl.coords}
+                  title={pl.name}
+                  pinColor={i === mapIndex ? 'red' : 'purple'}
+                />
+              ))}
+            </MapView>
+            <TouchableOpacity style={styles.leftArrow} onPress={goLeft}>
+              <Text style={styles.arrowText}>←</Text>
             </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <TouchableOpacity style={styles.rightArrow} onPress={goRight}>
+              <Text style={styles.arrowText}>→</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryScroll}
+           
+          >
+            {CATEGORIES.map((cat) => (
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  styles.categoryButton,
+                  selectedCategory === cat && styles.categoryButtonActive,
+                ]}
+                onPress={() =>
+                  setSelectedCategory(selectedCategory === cat ? null : cat)
+                }
+              >
+                <Text style={styles.categoryText}>{cat}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <View style={styles.placeContainer}>
+            {displayedPlaces.map((placeItem) => (
+              <TouchableOpacity
+                key={placeItem.id}
+                style={styles.placeCard}
+                onPress={() =>
+                  navigation.navigate('PlaceDetails', {
+                    place: placeItem,
+                    onToggleFavorite: (id, newFavorite) => {
+                      setPlaces((prev) =>
+                        prev.map((p) =>
+                          p.id === id ? { ...p, favorite: newFavorite } : p
+                        )
+                      );
+                    },
+                  })
+                }
+              >
+                <Image source={placeItem.image} style={styles.placeImage} />
+                <Text style={styles.placeName}>{placeItem.name}</Text>
+                <TouchableOpacity
+                  style={[
+                    styles.heartButton,
+                    placeItem.favorite && { backgroundColor: '#FFD700' },
+                  ]}
+                  onPress={() => {
+                    setPlaces((prev) =>
+                      prev.map((p) =>
+                        p.id === placeItem.id ? { ...p, favorite: !p.favorite } : p
+                      )
+                    );
+                  }}
+                >
+                  <Image
+                    source={require('../assets/heart.png')}
+                    style={[
+                      styles.heartIcon,
+                      placeItem.favorite && { tintColor: '#333' },
+                    ]}
+                  />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
-}const styles = StyleSheet.create({
-  container: {
+}
+
+const styles = StyleSheet.create({
+  background: {
     flex: 1,
-    backgroundColor: MAIN_BG,
+    width: '100%',
+    height: '100%',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollContainer: {
     paddingBottom: 120,

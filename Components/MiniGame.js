@@ -8,20 +8,21 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
-const MAIN_BG = '#143468';   // Темно-синий фон всего экрана
-const BOX_BG = '#2C6BC7';    // Синий контейнер с закруглёнными углами
-const CARD_BG = '#2C6BC7';   // Для полей ввода, если нужно
+const MAIN_BG = '#143468';   // Темно-синий фон всього екрану (буде використано, якщо потрібен запасний)
+const BOX_BG = '#2C6BC7';    // Синий контейнер з округленими кутами
+const CARD_BG = '#2C6BC7';   // Для полів вводу, якщо потрібно
 const TEXT_COLOR = '#FFFFFF';
 const TRANSPARENT_WHITE = 'rgba(255,255,255,0.5)';
 
 export default function MiniGame() {
   const navigation = useNavigation();
 
-  // Состояние: intro | quiz | end
+  // Стан: 'intro' | 'quiz' | 'end'
   const [screenState, setScreenState] = useState('intro');
 
   const quizData = [
@@ -46,26 +47,27 @@ export default function MiniGame() {
       answer: 'Citadel of Halifax',
     },
     {
-        id: 5,
-        image: require('../assets/photo3.jpeg'),
-        answer: 'Victoria Park',
-      },
-      {
-        id: 6,
-        image: require('../assets/photo102.jpeg'),
-        answer: 'Royal Nova Scotia International Tattoo',
-      },
-      {
-        id: 7,
-        image: require('../assets/photo9.jpeg'),
-        answer: 'Lone Shieling',
-      },
-      {
-        id: 8,
-        image: require('../assets/photo103.jpeg'),
-        answer: 'Angus L. Macdonald Bridge',
-      },
+      id: 5,
+      image: require('../assets/photo3.jpeg'),
+      answer: 'Victoria Park',
+    },
+    {
+      id: 6,
+      image: require('../assets/photo102.jpeg'),
+      answer: 'Royal Nova Scotia International Tattoo',
+    },
+    {
+      id: 7,
+      image: require('../assets/photo9.jpeg'),
+      answer: 'Lone Shieling',
+    },
+    {
+      id: 8,
+      image: require('../assets/photo103.jpeg'),
+      answer: 'Angus L. Macdonald Bridge',
+    },
   ];
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentQuestion = quizData[currentIndex];
   const correctAnswer = currentQuestion?.answer || '';
@@ -102,91 +104,99 @@ export default function MiniGame() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Шапка */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Image
-            source={require('../assets/arrow.png')}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mini-game</Text>
-      </View>
-
-      {/* Экран заставки */}
-      {screenState === 'intro' && (
-        <View style={styles.introWrapper}>
-          {/* Синий контейнер, внутри картинка 3D */}
-          <View style={styles.blueBox}>
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        {/* Шапка */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Image
-              source={require('../assets/3dWorld.png')}
-              style={styles.introImage}
+              source={require('../assets/arrow.png')}
+              style={styles.backIcon}
             />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Mini-game</Text>
+        </View>
+
+        {/* Екран заставки */}
+        {screenState === 'intro' && (
+          <View style={styles.introWrapper}>
+            {/* Синій контейнер, всередині картинка 3D */}
+            <View style={styles.blueBox}>
+              <Image
+                source={require('../assets/3dWorld.png')}
+                style={styles.introImage}
+              />
+            </View>
+            {/* Кнопка Start */}
+            <TouchableOpacity style={styles.startButton} onPress={startGame}>
+              <Text style={styles.startText}>Start &gt;&gt;</Text>
+            </TouchableOpacity>
           </View>
+        )}
 
-          {/* Кнопка Start */}
-          <TouchableOpacity style={styles.startButton} onPress={startGame}>
-            <Text style={styles.startText}>Start  &gt;&gt;</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* Экран викторины */}
-      {screenState === 'quiz' && (
-        <View style={styles.quizContainer}>
-          <Text style={styles.questionText}>What's in the photo?</Text>
-          <Image
-            source={currentQuestion?.image}
-            style={styles.quizImage}
-          />
-          <TextInput
-            style={[styles.input, { borderColor }]}
-            placeholder="Your answer..."
-            placeholderTextColor="#999"
-            value={userAnswer}
-            onChangeText={(val) => {
-              setUserAnswer(val);
-              setBorderColor(BOX_BG);
-            }}
-          />
-          <TouchableOpacity style={styles.checkButton} onPress={checkAnswer}>
+        {/* Екран вікторини */}
+        {screenState === 'quiz' && (
+          <View style={styles.quizContainer}>
+            <Text style={styles.questionText}>What's in the photo?</Text>
             <Image
-              source={require('../assets/mark.png')}
-              style={styles.checkIcon}
+              source={currentQuestion?.image}
+              style={styles.quizImage}
             />
-          </TouchableOpacity>
-        </View>
-      )}{/* Экран завершения */}
-      {screenState === 'end' && (
-        <View style={styles.endContainer}>
-          <View style={styles.blueBox}>
-            <Image
-              source={require('../assets/3dWorld.png')}
-              style={styles.introImage}
+            <TextInput
+              style={[styles.input, { borderColor }]}
+              placeholder="Your answer..."
+              placeholderTextColor="#999"
+              value={userAnswer}
+              onChangeText={(val) => {
+                setUserAnswer(val);
+                setBorderColor(BOX_BG);
+              }}
             />
+            <TouchableOpacity style={styles.checkButton} onPress={checkAnswer}>
+              <Image
+                source={require('../assets/mark.png')}
+                style={styles.checkIcon}
+              />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.endText}>Congratulations!</Text>
-          <TouchableOpacity
-            style={styles.endBackButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.endBackText}>Back to Menu</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </SafeAreaView>
+        )}
+
+        {/* Екран завершення */}
+        {screenState === 'end' && (
+          <View style={styles.endContainer}>
+            <View style={styles.blueBox}>
+              <Image
+                source={require('../assets/3dWorld.png')}
+                style={styles.introImage}
+              />
+            </View>
+            <Text style={styles.endText}>Congratulations!</Text>
+            <TouchableOpacity
+              style={styles.endBackButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.endBackText}>Back to Menu</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
-// Стили
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: MAIN_BG, // Темно-синий
+    backgroundColor: 'transparent',
   },
   header: {
     flexDirection: 'row',
@@ -215,8 +225,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 40,
   },
-
-  // Intro
+  // Intro styles
   introWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -232,7 +241,7 @@ const styles = StyleSheet.create({
   },
   introImage: {
     width: width * 0.5,
-    height: width * 0.5, // квадрат
+    height: width * 0.5,
     resizeMode: 'contain',
   },
   startButton: {
@@ -248,8 +257,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: '600',
   },
-
-  // Quiz
+  // Quiz styles
   quizContainer: {
     flex: 1,
     alignItems: 'center',
@@ -291,8 +299,7 @@ const styles = StyleSheet.create({
     height: 32,
     tintColor: MAIN_BG,
   },
-
-  // End
+  // End styles
   endContainer: {
     flex: 1,
     justifyContent: 'center',

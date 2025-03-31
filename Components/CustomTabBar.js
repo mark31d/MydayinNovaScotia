@@ -16,7 +16,7 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.tabBar, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.tabBar, { paddingBottom: insets.bottom }, { paddingBottom:12,}]}>
       <View style={styles.tabBarInner}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -56,7 +56,7 @@ export default function CustomTabBar({ state, descriptors, navigation }) {
             >
               <Image
                 source={iconSource}
-                style={[styles.tabIcon, { tintColor: iconTint }]}
+                style={[styles.tabIcon, { tintColor: iconTint } , ]}
               />
             </TouchableOpacity>
           );
@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: MAIN_BG,
     alignItems: 'center',
-    padding:15,
+    padding:14,
+    
     
   },
   tabBarInner: {
@@ -82,6 +83,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     marginBottom: -5,
+   
   },
   tabItem: {
     width: 60,
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: INACTIVE_BG,
     alignItems: 'center',
     justifyContent: 'center',
+
     
     
   },

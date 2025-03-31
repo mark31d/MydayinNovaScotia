@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
   SafeAreaView,
+  ImageBackground,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -75,7 +76,7 @@ Tickets can be purchased online on the website or at the entrance to the event.`
 ];
 
 /** ==================
- *  1) Список событий
+ *  1) Список событий (EventsList)
  * ================== */
 export function EventsList() {
   const navigation = useNavigation();
@@ -115,49 +116,49 @@ export function EventsList() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Шапка */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Events</Text>
-          <TouchableOpacity style={styles.headerHeart} onPress={goToFavoritesEvents}>
-            <Image
-              source={require('../assets/heart.png')}
-              style={styles.headerHeartIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        {/* Список карточек */}
-        <View style={{ marginHorizontal: 10 }}>
-          {events.map((ev) => (
-            <TouchableOpacity
-              key={ev.id}
-              style={styles.eventCard}
-              onPress={() => goToEventDetails(ev)}
-            >
-              <Image source={ev.image} style={styles.eventImage} />
-              <Text style={styles.eventName}>{ev.name}</Text>
-              {/* Сердце в карточке */}
-              <TouchableOpacity
-                style={[
-                  styles.favButton,
-                  ev.favorite && { backgroundColor: '#FFD700' },
-                ]}
-                onPress={() => toggleFavoriteInList(ev.id)}
-              >
-                <Image
-                  source={require('../assets/heart.png')}
-                  style={[
-                    styles.favIcon,
-                    ev.favorite && { tintColor: '#333' },
-                  ]}
-                />
-              </TouchableOpacity>
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={[styles.container, { backgroundColor: 'transparent' }]}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          {/* Шапка */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Events</Text>
+            <TouchableOpacity style={styles.headerHeart} onPress={goToFavoritesEvents}>
+              <Image
+                source={require('../assets/heart.png')}
+                style={styles.headerHeartIcon}
+              />
             </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </View>
+          {/* Список карточек */}
+          <View style={{ marginHorizontal: 10 }}>
+            {events.map((ev) => (
+              <TouchableOpacity
+                key={ev.id}
+                style={styles.eventCard}
+                onPress={() => goToEventDetails(ev)}
+              >
+                <Image source={ev.image} style={styles.eventImage} />
+                <Text style={styles.eventName}>{ev.name}</Text>
+                {/* Сердце в карточке */}
+                <TouchableOpacity
+                  style={[styles.favButton, ev.favorite && { backgroundColor: '#FFD700' }]}
+                  onPress={() => toggleFavoriteInList(ev.id)}
+                >
+                  <Image
+                    source={require('../assets/heart.png')}
+                    style={[styles.favIcon, ev.favorite && { tintColor: '#333' }]}
+                  />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -179,58 +180,66 @@ export function EventDetails() {
 
   const toggleSubscribe = () => {
     setSubscribed(!subscribed);
-  };  return (
-    <View style={styles.detailsContainer}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
-        {/* Обёртка для картинки, с кнопками ниже SafeArea */}
-        <View style={styles.imageWrapper}>
-          <Image source={eventItem.image} style={styles.detailsImage} />
-          <TouchableOpacity
-            style={styles.backButtonOnImage}
-            onPress={() => navigation.goBack()}
-          >
-            <Image
-              source={require('../assets/arrow.png')}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.heartOnImage}
-            onPress={toggleFavorite}
-          >
-            <Image
-              source={require('../assets/heart.png')}
-              style={[
-                styles.topHeartIcon,
-                isFavorite && { tintColor: '#FFD700' },
-              ]}
-            />
-          </TouchableOpacity>
-        </View>
-        {/* Информация */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.detailsTitle}>{eventItem.name}</Text>
-          <Text style={styles.detailsDate}>{eventItem.date}</Text>
-          <Text style={styles.detailsAddress}>{eventItem.address}</Text>
-          <Text style={styles.detailsDescription}>{eventItem.description}</Text>
-          <Text style={styles.sectionTitle}>Tickets</Text>
-          <Text style={styles.detailsTickets}>{eventItem.ticketsInfo}</Text>
-          <TouchableOpacity
-            style={styles.subscribeButton}
-            onPress={toggleSubscribe}
-          >
-            <Text style={styles.subscribeText}>
-              {subscribed ? 'Unsubscribe -' : 'Subscribe +'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={[styles.detailsContainer, { backgroundColor: 'transparent' }]}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+          {/* Обёртка для картинки */}
+          <View style={styles.imageWrapper}>
+            <Image source={eventItem.image} style={styles.detailsImage} />
+            <TouchableOpacity
+              style={styles.backButtonOnImage}
+              onPress={() => navigation.goBack()}
+            >
+              <Image
+                source={require('../assets/arrow.png')}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.heartOnImage}
+              onPress={toggleFavorite}
+            >
+              <Image
+                source={require('../assets/heart.png')}
+                style={[
+                  styles.topHeartIcon,
+                  isFavorite && { tintColor: '#FFD700' },
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+          {/* Информация */}
+          <View style={styles.infoContainer}>
+            <Text style={styles.detailsTitle}>{eventItem.name}</Text>
+            <Text style={styles.detailsDate}>{eventItem.date}</Text>
+            <Text style={styles.detailsAddress}>{eventItem.address}</Text>
+            <Text style={styles.detailsDescription}>{eventItem.description}</Text>
+            <Text style={styles.sectionTitle}>Tickets</Text>
+            <Text style={styles.detailsTickets}>{eventItem.ticketsInfo}</Text>
+            <TouchableOpacity
+              style={styles.subscribeButton}
+              onPress={toggleSubscribe}
+            >
+              <Text style={styles.subscribeText}>
+                {subscribed ? 'Unsubscribe -' : 'Subscribe +'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </ImageBackground>
   );
 }
 
 /** =======================================
- *  3) Экран для отображения избранных событий
+ *  3) Экран для отображения избранных событий (FavoritesEventsScreen)
  * ======================================= */
 export function FavoritesEventsScreen() {
   const navigation = useNavigation();
@@ -257,50 +266,58 @@ export function FavoritesEventsScreen() {
       }
       return updated;
     });
-  };  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Заголовок */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Favorite Events</Text>
-        </View>
-        <View style={{ marginHorizontal: 10 }}>
-          {favEvents.length === 0 && (
-            <Text style={{ color: TEXT_COLOR, textAlign: 'center', marginTop: 20 }}>
-              No favorite events yet.
-            </Text>
-          )}
-          {favEvents.map((ev) => (
-            <TouchableOpacity
-              key={ev.id}
-              style={styles.eventCard}
-              onPress={() => goToEventDetails(ev)}
-            >
-              <Image source={ev.image} style={styles.eventImage} />
-              <Text style={styles.eventName}>{ev.name}</Text>
-              <TouchableOpacity
-                style={[
-                  styles.favButton,
-                  ev.favorite && { backgroundColor: '#FFD700' },
-                ]}
-                onPress={() => handleToggleFavoriteInFavs(ev.id)}
-              >
-                <Image
-                  source={require('../assets/heart.png')}
-                  style={[
-                    styles.favIcon,
-                    ev.favorite && { tintColor: '#333' },
-                  ]}
-                />
-              </TouchableOpacity>
+  };
+
+  return (
+    <ImageBackground
+      source={require('../assets/back.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={[styles.container, { backgroundColor: 'transparent' }]}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          {/* Заголовок */}
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+              <Image source={require('../assets/arrow.png')} style={styles.backIcon} />
             </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <Text style={styles.headerTitle}>Favorite Events</Text>
+          </View>
+          <View style={{ marginHorizontal: 10 }}>
+            {favEvents.length === 0 && (
+              <Text style={{ color: TEXT_COLOR, textAlign: 'center', marginTop: 20 }}>
+                No favorite events yet.
+              </Text>
+            )}
+            {favEvents.map((ev) => (
+              <TouchableOpacity
+                key={ev.id}
+                style={styles.eventCard}
+                onPress={() => goToEventDetails(ev)}
+              >
+                <Image source={ev.image} style={styles.eventImage} />
+                <Text style={styles.eventName}>{ev.name}</Text>
+                <TouchableOpacity
+                  style={[
+                    styles.favButton,
+                    ev.favorite && { backgroundColor: '#FFD700' },
+                  ]}
+                  onPress={() => handleToggleFavoriteInFavs(ev.id)}
+                >
+                  <Image
+                    source={require('../assets/heart.png')}
+                    style={[
+                      styles.favIcon,
+                      ev.favorite && { tintColor: '#333' },
+                    ]}
+                  />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -311,17 +328,14 @@ export default {
 };
 
 const styles = StyleSheet.create({
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: TRANSPARENT_WHITE,
-    alignItems: 'center',
-    justifyContent: 'center',
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   container: {
     flex: 1,
-    backgroundColor: MAIN_BG,
+    backgroundColor: MAIN_BG, // використовуйте 'transparent' у компонентах, де потрібно бачити фон
   },
   header: {
     flexDirection: 'row',
@@ -336,7 +350,7 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginLeft: 40,
+    marginLeft: -20,
   },
   headerHeart: {
     width: 40,
@@ -393,7 +407,6 @@ const styles = StyleSheet.create({
     height: height * 0.4,
     position: 'relative',
     marginBottom: -20,
-    
   },
   detailsImage: {
     width: '100%',
@@ -414,7 +427,7 @@ const styles = StyleSheet.create({
   },
   heartOnImage: {
     position: 'absolute',
-    top: 50, // увеличено
+    top: 50,
     right: 20,
     width: 44,
     height: 44,
@@ -429,11 +442,12 @@ const styles = StyleSheet.create({
     tintColor: '#FFF',
   },
   topHeartIcon: {
-    width: 24,    height: 24,
+    width: 24,
+    height: 24,
     tintColor: '#FFF',
   },
   infoContainer: {
-    borderRadius:30,
+    borderRadius: 30,
     backgroundColor: CARD_BG,
     paddingTop: 20,
     paddingHorizontal: 15,
@@ -485,5 +499,13 @@ const styles = StyleSheet.create({
     color: MAIN_BG,
     fontSize: 16,
     fontWeight: '600',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: TRANSPARENT_WHITE,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
